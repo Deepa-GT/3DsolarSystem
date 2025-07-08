@@ -1,12 +1,7 @@
  ![solar icon](https://github.com/user-attachments/assets/5efe29c0-ad12-4e0a-bce5-ea7a2da0e500)**SolarSystem 3D visualization using three.js**
-![Screenshot 2025-07-08 191525](https://github.com/user-attachments/assets/39c82001-8929-4ad5-8668-0e78eaf42849)
-
-
-https://github.com/user-attachments/assets/9e1d3d0c-79fd-4a75-8d56-6704ad53c316
-
 
 Explore the wonders of our Solar System in an immersive 3D experience! Witness the rotation of planets around the Sun and their self-rotation in this interactive web-based application developed using Three.js.
- https://github.com/user-attachments/assets/ece945d4-d373-49c6-a63d-c932e6aee755
+ https://github.com/user-attachments/assets/9e1d3d0c-79fd-4a75-8d56-6704ad53c316
 
 ## 📚 Table of Contents
 
