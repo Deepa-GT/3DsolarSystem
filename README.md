@@ -11,7 +11,7 @@ Explore the wonders of our Solar System in an immersive 3D experience! Witness t
 3. [Features](#features)  
 4. [Technologies Used](#technologies-used)  
 5. [Getting Started](#getting-started)  
- 
+6. [live Demo](#live-demo)
 1.## 🪐 Introduction
 --
 The Solar System 3D Visualization project is an interactive web-based application that allows users to explore the Solar System in a three-dimensional environment. The project is developed using the Three.js library, which provides powerful tools for creating 3D content on the web. Users can witness the rotation of planets around the Sun and their self-rotation, as well as enjoy the beauty of space in this immersive experience.
@@ -26,6 +26,10 @@ he project consists of an HTML file that sets up the web page, loads required li
 --
 -Realistic 3D visualization of the Solar System.
 -Interactive controls to explore the planets and their orbits.
+- Pause/Resume button
+  - Dark/Light mode toggle
+  - “Back to Solar System” button when zoomed in
+
 
 Speed Control
 --
@@ -44,7 +48,7 @@ The "Real view" option in the GUI replicates the conditions in space, where part
 
 - **Three.js** – 3D rendering engine
 - **dat.GUI** – Control interface
-- **HTML5**, **CSS3**, **JavaScript**
+- **HTML, **CSS3**, **JavaScript**
 -----
 
 ## ⚙️ Getting Started
@@ -53,8 +57,17 @@ The "Real view" option in the GUI replicates the conditions in space, where part
 1. Clone the repository:
 ```bash
 git clone https://github.com/Deepa-GT/3DsolarSystem.git
+```
 2. Navigate to the folder:
-    GO to bash run : cd 3DsolarSystem
-3. Open index.html in your browser:
-  start index.html  # or just double-click it
+    GO to bash run :
+   ```
+    cd 3DsolarSystem
+4. Open index.html in your browser:
+  ```
+    start index.html
+  ```
+  # or just double-click it
+
+🌐 Live Demo
+🔗https://deepa-gt.github.io/3DsolarSystem/
 
