@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Solar System Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    #control-panel {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      left: auto;
+      top: auto;
+      transform: none;
+      background: rgba(20, 20, 20, 0.70);
+      padding: 0;
+      border-radius: 10px;
+      z-index: 10;
+      box-shadow: 0 2px 12px #000a;
+      max-width: 220px;
+      width: 70vw;
+      min-width: 160px;
+      min-height: 80px;
+      overflow-y: auto;
+      max-height: 80vh;
+      resize: none;
+    }
+    #panel-header {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #panel-content {
+      padding: 8px 6px 8px 6px;
+    }
+    #panel-resize {
+      background: linear-gradient(135deg, #ffd700 40%, #222 100%);
+      border-radius: 0 0 7px 0;
+    }
+    #control-panel label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    #control-panel input[type="range"] {
+      width: 32vw;
+      max-width: 70px;
+      height: 16px;
+      margin-left: 6px;
+    }
+    #control-panel span {
+      margin-left: 4px;
+      font-size: 11px;
+      color: #ffd700;
+    }
+    #pause-btn, #theme-toggle {
+      width: 100%;
+      padding: 7px 0;
+      font-size: 13px;
+      margin-bottom: 7px;
+      border-radius: 6px;
+    }
+    #solar-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      touch-action: none;
+    }
+    #file-warning {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #ff4444;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 16px;
+      z-index: 1000;
+      font-weight: bold;
+    }
+    #planet-tooltip {
+      font-size: 12px;
+      padding: 3px 6px;
+    }
+    @media (max-width: 600px) {
+      #control-panel {
+        max-width: 92vw;
+        right: 4vw;
+        bottom: 4vw;
+        left: auto;
+        top: auto;
+        transform: none;
+        min-width: 120px;
+        min-height: 60px;
+        padding: 0;
+        background: rgba(20, 20, 20, 0.50);
+      }
+      #panel-content {
+        padding: 4px 2vw 4px 2vw;
+      }
+      #control-panel label {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      #control-panel input[type="range"] {
+        width: 22vw;
+        max-width: 50px;
+        height: 14px;
+        margin-left: 4px;
+      }
+      #control-panel span {
+        font-size: 10px;
+        margin-left: 2px;
+      }
+      #pause-btn, #theme-toggle {
+        font-size: 11px;
+        padding: 5px 0;
+        margin-bottom: 5px;
+      }
+      #planet-tooltip {
+        font-size: 10px;
+        padding: 2px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="file-warning">
+    <span>⚠️ For best results, please run this project using a local server (not by double-clicking the HTML file).<br>
+    Images and textures may not load if opened via <code>file://</code>.<br>
+    <b>To start a server:</b> In this folder, run <code>python -m http.server 8000</code> and open <a href="http://localhost:8000/index.html" style="color: #fff; text-decoration: underline;">http://localhost:8000/index.html</a></span>
+  </div>
+  <button id="toggle-panel-btn" style="display:none;position:fixed;top:14px;right:14px;z-index:1001;padding:8px 14px;font-size:18px;border-radius:8px;border:none;background:#ffd700;color:#222;box-shadow:0 2px 8px #000a;cursor:pointer;">☰ Controls</button>
+  <div id="control-panel">
+    <div id="panel-header" style="cursor:move;background:rgba(40,40,40,0.8);padding:4px 0 4px 8px;border-radius:7px 7px 0 0;font-size:14px;font-weight:bold;color:#ffd700;user-select:none;">☰ Controls</div>
+    <div id="panel-content">
+      <h3 style="margin-top:6px;">Planet Speed Controls</h3>
+      <div style="font-size:13px; color:#ffd700; margin-bottom:10px;">
+        <b>Tip:</b> If you don't see planet textures, run this page on a local server.<br>
+        <span style="color:#aaa;">(See red warning above for instructions.)</span>
+      </div>
+      <button id="pause-btn" style="margin-bottom:7px;width:100%;padding:7px 0;font-size:13px;cursor:pointer;">Pause</button>
+      <button id="theme-toggle" style="margin-bottom:7px;width:100%;padding:7px 0;font-size:13px;cursor:pointer;">Light Mode</button>
+      <label>Mercury <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-mercury"><span id="val-mercury">1.00</span></label>
+      <label>Venus <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-venus"><span id="val-venus">1.00</span></label>
+      <label>Earth <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-earth"><span id="val-earth">1.00</span></label>
+      <label>Mars <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-mars"><span id="val-mars">1.00</span></label>
+      <label>Jupiter <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-jupiter"><span id="val-jupiter">1.00</span></label>
+      <label>Saturn <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-saturn"><span id="val-saturn">1.00</span></label>
+      <label>Uranus <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-uranus"><span id="val-uranus">1.00</span></label>
+      <label>Neptune <input type="range" min="0.1" max="5" step="0.01" value="1" id="speed-neptune"><span id="val-neptune">1.00</span></label>
+    </div>
+    <div id="panel-resize" style="position:absolute;right:2px;bottom:2px;width:18px;height:18px;cursor:nwse-resize;z-index:2;"></div>
+  </div>
+  <canvas id="solar-canvas"></canvas>
+  <div id="planet-tooltip" style="display:none;position:fixed;z-index:1001;background:rgba(30,30,30,0.95);color:#ffd700;padding:4px 10px;border-radius:6px;font-size:15px;pointer-events:none;box-shadow:0 2px 8px #000a;"></div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    // Show warning if opened via file://
+    if (window.location.protocol === 'file:') {
+      document.getElementById('file-warning').style.display = 'block';
+    }
+
+    // Collapsible control panel for mobile
+    function checkMobile() {
+      return window.innerWidth <= 600;
+    }
+    const controlPanel = document.getElementById('control-panel');
+    const toggleBtn = document.getElementById('toggle-panel-btn');
+    function showPanel(show) {
+      if (show) {
+        controlPanel.style.display = '';
+        toggleBtn.textContent = '✕ Close';
+      } else {
+        controlPanel.style.display = 'none';
+        toggleBtn.textContent = '☰ Controls';
+      }
+    }
+    function updatePanelVisibility() {
+      if (checkMobile()) {
+        toggleBtn.style.display = 'block';
+        showPanel(false);
+      } else {
+        toggleBtn.style.display = 'none';
+        controlPanel.style.display = '';
+      }
+    }
+    toggleBtn.addEventListener('click', function() {
+      if (controlPanel.style.display === 'none') {
+        showPanel(true);
+      } else {
+        showPanel(false);
+      }
+    });
+    window.addEventListener('resize', updatePanelVisibility);
+    window.addEventListener('orientationchange', updatePanelVisibility);
+    updatePanelVisibility();
+
+    // Draggable and resizable control panel
+    (function() {
+      const panel = document.getElementById('control-panel');
+      const header = document.getElementById('panel-header');
+      const resizeHandle = document.getElementById('panel-resize');
+      let isDragging = false, isResizing = false;
+      let dragOffsetX = 0, dragOffsetY = 0;
+      let startW = 0, startH = 0, startX = 0, startY = 0;
+
+      header.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        dragOffsetX = e.clientX - panel.offsetLeft;
+        dragOffsetY = e.clientY - panel.offsetTop;
+        document.body.style.userSelect = 'none';
+      });
+      document.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+          let x = e.clientX - dragOffsetX;
+          let y = e.clientY - dragOffsetY;
+          // Keep panel within window
+          x = Math.max(0, Math.min(window.innerWidth - panel.offsetWidth, x));
+          y = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, y));
+          panel.style.left = x + 'px';
+          panel.style.top = y + 'px';
+          panel.style.right = 'auto';
+          panel.style.bottom = 'auto';
+        }
+        if (isResizing) {
+          let newW = Math.max(panel.minWidth || 120, startW + (e.clientX - startX));
+          let newH = Math.max(panel.minHeight || 60, startH + (e.clientY - startY));
+          panel.style.width = newW + 'px';
+          panel.style.height = newH + 'px';
+        }
+      });
+      document.addEventListener('mouseup', function() {
+        isDragging = false;
+        isResizing = false;
+        document.body.style.userSelect = '';
+      });
+      resizeHandle.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        startW = panel.offsetWidth;
+        startH = panel.offsetHeight;
+        startX = e.clientX;
+        startY = e.clientY;
+        e.stopPropagation();
+        document.body.style.userSelect = 'none';
+      });
+    })();
+  </script>
+  <script type="module" src="js/solarSystem.js"></script>
+</body>
+</html>
